@@ -9,14 +9,10 @@ import user.service.controller.dto.UserDto;
 import user.service.controller.request.CreateUserRequest;
 import user.service.service.UserService;
 
-import javax.inject.Inject;
-
 @Controller("/api/users")
 public class UserController {
-
     private final UserService userService;
 
-    @Inject
     public UserController(UserService userService) {
         this.userService = userService;
     }
