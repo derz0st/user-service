@@ -2,31 +2,48 @@ package user.service.service;
 
 import io.github.benas.randombeans.EnhancedRandomBuilder;
 import io.github.benas.randombeans.api.EnhancedRandom;
-import io.micronaut.test.annotation.MicronautTest;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import user.service.controller.dto.UserDto;
 import user.service.controller.request.CreateUserRequest;
+import user.service.model.User;
+import user.service.repository.UserRepository;
 
-import javax.inject.Inject;
 import java.lang.reflect.InvocationTargetException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@MicronautTest
+@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
-    @Inject
+    @Mock
+    private UserRepository userRepository;
+    @InjectMocks
     private UserService subject;
+    
     private EnhancedRandom random = EnhancedRandomBuilder.aNewEnhancedRandomBuilder().build();
-
+    
     @Test
     void createUser_whenAllParametersProvided_createsUserDtoAndReturnsIt() throws InvocationTargetException, IllegalAccessException {
-        CreateUserRequest request = random.nextObject(CreateUserRequest.class);
+        User user = random.nextObject(User.class, "id");
         UserDto expected = new UserDto();
-        BeanUtils.copyProperties(expected, request);
+        CreateUserRequest request = new CreateUserRequest();
+        
+        BeanUtils.copyProperties(request, user);
+        BeanUtils.copyProperties(expected, user);
 
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        
         UserDto actual = subject.createUser(request);
-
-        assertThat(actual).isEqualToIgnoringNullFields(expected);
+        
+        verify(userRepository).save(user);
+        assertThat(actual).isEqualToIgnoringGivenFields(expected, "id");
     }
+    
 }

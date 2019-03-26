@@ -4,10 +4,11 @@ micronaut:
 
 datasources:
     default:
-        url: jdbc:postgresql://localhost:5432/user-db
+        url: jdbc:postgresql://localhost:5000/user-db
         driverClassName: org.postgresql.Driver
         username: postgres
         password: postgres
+
 
 jpa:
     default:
