@@ -1,3 +1,16 @@
 micronaut:
     application:
         name: user-service
+
+
+datasources:
+    default:
+        url: jdbc:postgresql://localhost:5432/user-db
+        driverClassName: org.postgresql.Driver
+        username: postgres
+        password: postgres
+
+jpa:
+    default:
+        packages-to-scan:
+            - 'user.service.model'
