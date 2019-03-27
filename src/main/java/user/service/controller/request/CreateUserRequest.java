@@ -1,13 +1,24 @@
 package user.service.controller.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateUserRequest {
-    private String name;
+    @JsonProperty("email")
     private String email;
+    @JsonProperty("first_name")
+    private String firstName;
+    @JsonProperty("last_name")
+    private String lastName;
+    @JsonProperty("birthday_date")
+    private LocalDate birthdayDate;
+    @JsonProperty("bio")
+    private String bio;
 }

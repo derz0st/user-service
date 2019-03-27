@@ -7,22 +7,21 @@ import io.micronaut.context.env.PropertySource;
 import io.micronaut.runtime.server.EmbeddedServer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import user.service.model.User;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Testcontainers
 class UserRepositoryTest {
     private static UserRepository userRepository;
-    @PersistenceContext
-    private static EntityManager entityManager;
     private EnhancedRandom random = EnhancedRandomBuilder.aNewEnhancedRandomBuilder().build();
 
     @Container
@@ -40,20 +39,22 @@ class UserRepositoryTest {
                         PropertySource.of("test", singletonMap("datasources.default.url", jdbcUrl)));
         
         userRepository = server.getApplicationContext().getBean(UserRepository.class);
-        entityManager = server.getApplicationContext().getBean(EntityManager.class);
     }
 
     @Test
-    void save_whenRequiredParametersProvided_savesUser() {
-        User expected = random.nextObject(User.class);
-        userRepository.save(expected);
-        
-//        TODO: setup entity manager 
-//        String selectQuery = String.format("from users where id = %s", expected.getId());
-//        User actual = entityManager.createQuery(selectQuery, User.class).getSingleResult();
+    void save_whenAllAttributesProvided_savesUser() {
+        User expected = userRepository.save(random.nextObject(User.class, "id"));
         
         User actual = userRepository.getById(expected.getId());
-
+        
         assertThat(actual).isEqualTo(expected);
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"firstName", "lastName", "email"})
+    void save_whenRequiredAttributeIsNotProvided_throwsException(String requiredAttribute) {
+        User user = random.nextObject(User.class, "id", requiredAttribute);
+        
+        assertThrows(DataIntegrityViolationException.class, () -> userRepository.save(user));
     }
 }

@@ -17,16 +17,35 @@ public class UserService {
 
     public UserDto createUser(CreateUserRequest request) {
         User user = new User();
-        user.setName(request.getName());
+
         user.setEmail(request.getEmail());
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setBirthdayDate(request.getBirthdayDate());
+        user.setBio(request.getBio());
 
         user = userRepository.save(user);
 
-        return new UserDto(user.getId(), user.getName(), user.getEmail());
+        return new UserDto(
+                user.getId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getBirthdayDate(),
+                user.getBio()
+        );
     }
 
     public UserDto getUser(Long id) {
         User user = userRepository.getById(id);
-        return new UserDto(user.getId(), user.getName(), user.getEmail());
+        
+        return new UserDto(
+                user.getId(),
+                user.getEmail(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getBirthdayDate(),
+                user.getBio()
+        );
     }
 }

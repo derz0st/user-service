@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import user.service.controller.dto.UserDto;
 import user.service.controller.request.CreateUserRequest;
+import user.service.repository.UserRepository;
 import user.service.service.UserService;
 
 import java.lang.reflect.InvocationTargetException;
@@ -34,6 +35,7 @@ class UserControllerTest {
                 .build()
                 .build()
                 .registerSingleton(userService)
+                .registerSingleton(mock(UserRepository.class))
                 .start()
                 .getBean(EmbeddedServer.class)
                 .start();
@@ -47,12 +49,8 @@ class UserControllerTest {
 
     @AfterAll
     static void tearDown() {
-        if (server != null) {
-            server.stop();
-        }
-        if (client != null) {
-            client.stop();
-        }
+        if (server != null) server.stop();
+        if (client != null) client.stop();
     }
 
     @Test

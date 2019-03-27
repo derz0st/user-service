@@ -20,14 +20,13 @@ public class UserRepository {
 
     @Transactional
     public User save(User user) {
-        user.setId(1L);
         entityManager.persist(user);
         return user;
     }
 
     @Transactional
     public User getById(Long id) {
-        return (User) query("from users u where u.id = :id")
+        return (User) query("from usr where id = :id")
                 .setParameter("id", id)
                 .getSingleResult();
     }

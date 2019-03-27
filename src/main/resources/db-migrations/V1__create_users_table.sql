@@ -1,14 +1,10 @@
-CREATE TABLE public.users
-(
-    id bigint NOT NULL,
-    email character varying(255) COLLATE pg_catalog."default",
-    name character varying(255) COLLATE pg_catalog."default",
-    CONSTRAINT users_pkey PRIMARY KEY (id)
-)
-WITH (
-    OIDS = FALSE
-)
-TABLESPACE pg_default;
+CREATE SEQUENCE user_id_seq START 1;
 
-ALTER TABLE public.users
-    OWNER to postgres;
+CREATE TABLE usr (
+    id bigserial primary key,
+    email varchar(100) NOT NULL,
+    first_name varchar(100) NOT NULL,
+    last_name varchar(100) NOT NULL,
+    birthday_date date,
+    bio varchar(1000)
+);
